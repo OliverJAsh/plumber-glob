@@ -91,4 +91,23 @@ describe('glob', function() {
       });
     });
   });
+
+  describe('#exclude', function () {
+    it('should be a function', function() {
+      glob.exclude.should.be.a('function');
+    });
+
+    it('should return a promise of resources', function() {
+      var globbedResources = glob('test/files/file-*.js')([], supervisor);
+      return globbedResources.then(function(resources) {
+        return glob.exclude('test/files/file-1.js')(resources, supervisor);
+      }).then(function (resources) {
+        resources.length.should.equal(1);
+        resources[0].filename().should.equal('file-2.js');
+        resources[0].data().should.equal('function nothing() {\n}\n');
+        resources[0].type().should.equal('javascript');
+        should.not.exist(resources[0].sourceMap());
+      });
+    });
+  });
 });

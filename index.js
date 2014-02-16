@@ -30,6 +30,21 @@ function globOperation(mapper) {
         }));
     };
 
+    glob.exclude = function (/* files... */) {
+        var fileList = flatten([].slice.call(arguments)).map(mapper);
+        // TODO: add `removeResources` method to plumber core?
+        return function(inResources, supervisor) {
+            var glob = supervisor.glob.bind(supervisor);
+            return q.all(fileList.map(glob)).then(flatten).then(q.all).then(function(excludedResources) {
+                return inResources.filter(function (inResource) {
+                    return ! excludedResources.some(function (excludedResource) {
+                        return excludedResource.filename() === inResource.filename();
+                    });
+                });
+            });
+        };
+    };
+
     return glob;
 };
 
