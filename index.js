@@ -21,7 +21,7 @@ function globOperation(mapper) {
             var glob = supervisor.glob.bind(supervisor);
             return q.all(fileList.map(glob)).then(flatten).then(q.all);
         });
-    };
+    }
 
     // recursively compose mappers
     glob.within = function(directory) {
