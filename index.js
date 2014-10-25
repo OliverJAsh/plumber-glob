@@ -36,6 +36,7 @@ function asMinimatch(pattern) {
 // Returns an Observable of events for the gazed patterns
 function gazeObservable(patterns) {
     var gazer = new Gaze(patterns);
+    gazer.removeListener('error');
     return Rx.Observable.fromEvent(gazer, 'all');
 }
 
