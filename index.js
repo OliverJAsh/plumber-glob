@@ -74,10 +74,16 @@ function globOperation(mapper, excludedPatterns) {
         // TODO: or new upstream operation? merge instead of concat?
         return operation.concatExecutions(function() {
             // TODO: gaze in supervisor
-            var changes = gazeObservable(patterns);
-            var gazedResources = changes.map(globResources);
+            // FIXME: We can't have multiple Gazes because of a bug in Gaze:
+            // https://github.com/shama/gaze/issues/104
+            var resources = globResources().share();
+            var changes = resources
+                .map(function (resource) { return resource.path().absolute(); })
+                .toArray()
+                .flatMap(gazeObservable);
+            var gazedResources = changes.map(resources);
 
-            return Rx.Observable.return(globResources()).concat(gazedResources);
+            return Rx.Observable.return(resources).concat(gazedResources);
         });
     };
 
