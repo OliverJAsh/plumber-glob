@@ -81,7 +81,7 @@ function globOperation(mapper, excludedPatterns) {
                 .map(function (resource) { return resource.path().absolute(); })
                 .toArray()
                 .flatMap(gazeObservable);
-            var gazedResources = changes.map(resources);
+            var gazedResources = changes.map(globResources);
 
             return Rx.Observable.return(resources).concat(gazedResources);
         });
